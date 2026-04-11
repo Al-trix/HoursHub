@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat  = "cjs"
+}
+
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum Role {
+  CREATOR
+  USER
+}
+
+enum ScheduleStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  apellido  String?
+  role       Role?
+  email     String?  @unique
+  password  String?
+
+  createdSchedules  Schedule[] @relation("CreatorSchedules")
+  assignedSchedules Schedule[] @relation("AssignedSchedules")
+}
+
+model Schedule {
+  id          String         @id @default(uuid())
+  name        String?
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      ScheduleStatus?
+
+  idCreator   String
+  creator     User   @relation("CreatorSchedules", fields: [idCreator], references: [id])
+
+  idAsigned   String
+  assigned    User   @relation("AssignedSchedules", fields: [idAsigned], references: [id])
+}
