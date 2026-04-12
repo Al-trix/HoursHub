@@ -171,8 +171,19 @@ let SchedulesService = class SchedulesService {
             throw new common_1.InternalServerErrorException('Failed to find schedule');
         }
     }
-    async update(id, updateScheduleDto) {
+    async update(id, userCreatorId, updateScheduleDto) {
         try {
+            const userCreated = await prisma_1.prisma.user.findUnique({
+                where: {
+                    id: userCreatorId,
+                },
+            });
+            if (!userCreated) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            if (userCreated.role !== enums_1.Role.CREATOR) {
+                throw new common_1.BadRequestException('User creator is not a creator');
+            }
             const schedule = await prisma_1.prisma.schedule.update({
                 where: {
                     id,
@@ -193,8 +204,19 @@ let SchedulesService = class SchedulesService {
             throw new common_1.InternalServerErrorException('Failed to update schedule');
         }
     }
-    async remove(id) {
+    async remove(id, userCreatorId) {
         try {
+            const userCreated = await prisma_1.prisma.user.findUnique({
+                where: {
+                    id: userCreatorId,
+                },
+            });
+            if (!userCreated) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            if (userCreated.role !== enums_1.Role.CREATOR) {
+                throw new common_1.BadRequestException('User creator is not a creator');
+            }
             const schedule = await prisma_1.prisma.schedule.delete({
                 where: {
                     id,

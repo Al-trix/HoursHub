@@ -1,3 +1,12 @@
+import { Role } from 'src/generated/prisma/enums';
+import { Request } from 'express';
+export interface UserPayload {
+  id: string;
+  role: Role;
+  iat?: number;
+  exp?: number;
+}
+
 export interface ScheduleResponse {
   id: string;
   name: string | null;
@@ -17,4 +26,8 @@ export interface ScheduleResponse {
     fullName: string | null;
     role: string | null;
   };
+}
+
+export interface RequestWithUser extends Request {
+  user: UserPayload;
 }

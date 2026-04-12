@@ -2,9 +2,13 @@ import { NotFoundException, InternalServerErrorException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 import { Role } from "../generated/prisma/enums";
-import { ScheduleResponse } from './types/users-types';
+import { ScheduleResponse, UserPayload } from './types/users-types';
 export declare class UsersService {
+    private readonly jwtService;
+    constructor(jwtService: JwtService);
+    verifyToken(token: string): Promise<UserPayload>;
     register(createUserDto: CreateUserDto): Promise<{
         message: string;
         user: {
@@ -13,8 +17,28 @@ export declare class UsersService {
             fullName: string;
             role: Role | null;
         };
+        token: string;
     }>;
     login(loginUserDto: LoginUserDto): Promise<{
+        message: string;
+        user: {
+            schedulesCreated: ScheduleResponse[];
+            schedulesAssigned: ScheduleResponse[];
+            id: string;
+            email: string | null;
+            fullName: string;
+            role: Role | null;
+        } | {
+            schedulesAssigned: ScheduleResponse[];
+            schedulesCreated?: undefined;
+            id: string;
+            email: string | null;
+            fullName: string;
+            role: Role | null;
+        };
+        token: string;
+    }>;
+    getMe(id: string): Promise<{
         message: string;
         user: {
             schedulesCreated: ScheduleResponse[];
@@ -79,9 +103,9 @@ export declare class UsersService {
     update(id: string, updateUserDto: UpdateUserDto): Promise<InternalServerErrorException | {
         message: string;
         user: {
+            name: string | null;
             id: string;
             email: string | null;
-            name: string | null;
             apellido: string | null;
             role: Role | null;
             password: string | null;
@@ -90,9 +114,9 @@ export declare class UsersService {
     remove(id: string): Promise<InternalServerErrorException | {
         message: string;
         user: {
+            name: string | null;
             id: string;
             email: string | null;
-            name: string | null;
             apellido: string | null;
             role: Role | null;
             password: string | null;

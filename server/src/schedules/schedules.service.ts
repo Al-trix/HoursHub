@@ -192,8 +192,26 @@ export class SchedulesService {
     }
   }
 
-  async update(id: string, updateScheduleDto: UpdateScheduleDto) {
+  async update(
+    id: string,
+    userCreatorId: string,
+    updateScheduleDto: UpdateScheduleDto,
+  ) {
     try {
+      const userCreated = await prisma.user.findUnique({
+        where: {
+          id: userCreatorId,
+        },
+      });
+
+      if (!userCreated) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (userCreated.role !== Role.CREATOR) {
+        throw new BadRequestException('User creator is not a creator');
+      }
+
       const schedule = await prisma.schedule.update({
         where: {
           id,
@@ -215,8 +233,22 @@ export class SchedulesService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, userCreatorId: string) {
     try {
+      const userCreated = await prisma.user.findUnique({
+        where: {
+          id: userCreatorId,
+        },
+      });
+
+      if (!userCreated) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (userCreated.role !== Role.CREATOR) {
+        throw new BadRequestException('User creator is not a creator');
+      }
+
       const schedule = await prisma.schedule.delete({
         where: {
           id,

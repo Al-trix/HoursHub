@@ -8,14 +8,31 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const core_1 = require("@nestjs/core");
+const jwt_1 = require("@nestjs/jwt");
 const schedules_module_1 = require("./schedules/schedules.module");
 const users_module_1 = require("./users/users.module");
+const users_guard_1 = require("./users/guards/users.guard");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [schedules_module_1.SchedulesModule, users_module_1.UsersModule],
+        imports: [
+            schedules_module_1.SchedulesModule,
+            users_module_1.UsersModule,
+            jwt_1.JwtModule.register({
+                global: true,
+                secret: process.env.JWT_KEY ?? 'cambia_esto_por_env',
+                signOptions: { expiresIn: '1h' },
+            }),
+        ],
+        providers: [
+            {
+                provide: core_1.APP_GUARD,
+                useClass: users_guard_1.UsersGuard,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

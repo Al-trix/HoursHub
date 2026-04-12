@@ -39,16 +39,20 @@ export class SchedulesController {
     return this.schedulesService.findOne(id);
   }
 
-  @Patch('update/:id')
+  @Patch('update/:id/:userCreatorId')
   update(
     @Param('id') id: string,
+    @Param('userCreatorId') userCreatorId: string,
     @Body() updateScheduleDto: UpdateScheduleDto,
   ) {
-    return this.schedulesService.update(id, updateScheduleDto);
+    return this.schedulesService.update(id, userCreatorId, updateScheduleDto);
   }
 
-  @Delete('delete/:id')
-  remove(@Param('id') id: string) {
-    return this.schedulesService.remove(id);
+  @Delete('delete/:id/:userCreatorId')
+  remove(
+    @Param('id') id: string,
+    @Param('userCreatorId') userCreatorId: string,
+  ) {
+    return this.schedulesService.remove(id, userCreatorId);
   }
 }

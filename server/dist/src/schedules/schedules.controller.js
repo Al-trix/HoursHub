@@ -32,11 +32,11 @@ let SchedulesController = class SchedulesController {
     findOne(id) {
         return this.schedulesService.findOne(id);
     }
-    update(id, updateScheduleDto) {
-        return this.schedulesService.update(id, updateScheduleDto);
+    update(id, userCreatorId, updateScheduleDto) {
+        return this.schedulesService.update(id, userCreatorId, updateScheduleDto);
     }
-    remove(id) {
-        return this.schedulesService.remove(id);
+    remove(id, userCreatorId) {
+        return this.schedulesService.remove(id, userCreatorId);
     }
 };
 exports.SchedulesController = SchedulesController;
@@ -63,18 +63,20 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SchedulesController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Patch)('update/:id'),
+    (0, common_1.Patch)('update/:id/:userCreatorId'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('userCreatorId')),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_schedule_dto_1.UpdateScheduleDto]),
+    __metadata("design:paramtypes", [String, String, update_schedule_dto_1.UpdateScheduleDto]),
     __metadata("design:returntype", void 0)
 ], SchedulesController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)('delete/:id'),
+    (0, common_1.Delete)('delete/:id/:userCreatorId'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('userCreatorId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], SchedulesController.prototype, "remove", null);
 exports.SchedulesController = SchedulesController = __decorate([

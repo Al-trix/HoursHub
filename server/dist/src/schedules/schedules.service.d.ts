@@ -52,11 +52,11 @@ export declare class SchedulesService {
             };
         };
     }>;
-    update(id: string, updateScheduleDto: UpdateScheduleDto): Promise<{
+    update(id: string, userCreatorId: string, updateScheduleDto: UpdateScheduleDto): Promise<{
         message: string;
         status: number;
     }>;
-    remove(id: string): Promise<{
+    remove(id: string, userCreatorId: string): Promise<{
         message: string;
         status: number;
     }>;

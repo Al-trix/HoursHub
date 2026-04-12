@@ -11,23 +11,42 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
+const express_1 = __importDefault(require("express"));
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const login_user_dto_1 = require("./dto/login-user.dto");
+const public_decorator_1 = require("./decorators/public.decorator");
 let UsersController = class UsersController {
     usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
-    register(createUserDto) {
-        return this.usersService.register(createUserDto);
+    async register(createUserDto, res) {
+        const user = await this.usersService.register(createUserDto);
+        res.cookie('access_token', user.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 60,
+        });
+        return { message: user.message, user: user.user };
     }
-    login(loginUserDto) {
-        return this.usersService.login(loginUserDto);
+    async login(loginUserDto, res) {
+        const user = await this.usersService.login(loginUserDto);
+        res.cookie('access_token', user.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 60,
+        });
+        return { message: 'Login exitoso' };
     }
     findAll() {
         return this.usersService.findAll();
@@ -35,24 +54,35 @@ let UsersController = class UsersController {
     update(id, updateUserDto) {
         return this.usersService.update(id, updateUserDto);
     }
+    getMe(req) {
+        return this.usersService.getMe(req.user.id);
+    }
+    logout(res) {
+        res.clearCookie('access_token');
+        return { message: 'Logout exitoso' };
+    }
     remove(id) {
         return this.usersService.remove(id);
     }
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Post)('/register'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto, Object]),
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "register", null);
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Post)('/login'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_user_dto_1.LoginUserDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [login_user_dto_1.LoginUserDto, Object]),
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "login", null);
 __decorate([
     (0, common_1.Get)('/all'),
@@ -68,6 +98,21 @@ __decorate([
     __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "update", null);
+__decorate([
+    (0, common_1.Get)('/me'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getMe", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Post)('/logout'),
+    __param(0, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "logout", null);
 __decorate([
     (0, common_1.Delete)('/delete/:id'),
     __param(0, (0, common_1.Param)('id')),
