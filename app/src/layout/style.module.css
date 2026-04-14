@@ -1,0 +1,17 @@
+.link {
+    position: relative;
+}
+
+.linkSpan {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(to right, #8b5cf6, #735cf6);
+    transition: width 0.3s ease;
+}
+
+.link:hover .linkSpan {
+    width: 100%;
+}

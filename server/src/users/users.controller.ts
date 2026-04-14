@@ -16,6 +16,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Public } from './decorators/public.decorator';
 import type { RequestWithUser } from './types/users-types';
+
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
